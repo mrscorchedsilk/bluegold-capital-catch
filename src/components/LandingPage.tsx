@@ -1,16 +1,10 @@
-import React, { useEffect, useState } from 'react';
+
+import React from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/components/ui/use-toast';
-
-// Define TypeScript interface for Typeform global object
-declare global {
-  interface Window {
-    typeformEmbed?: any;
-  }
-}
 
 interface LandingPageProps {
   headline: {
@@ -21,56 +15,17 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
-  const [typeformLoaded, setTypeformLoaded] = useState(false);
-  
-  useEffect(() => {
-    // Check if Typeform script is loaded
-    const checkTypeformLoaded = () => {
-      if (window.typeformEmbed) {
-        setTypeformLoaded(true);
-        console.log('Typeform script loaded successfully');
-      } else {
-        console.log('Waiting for Typeform script to load...');
-        setTimeout(checkTypeformLoaded, 500);
-      }
-    };
-    
-    checkTypeformLoaded();
-    
-    return () => {
-      // Cleanup
-    };
-  }, []);
   
   const handleApplyClick = () => {
-    try {
-      if (typeformLoaded) {
-        console.log('Opening Typeform');
-        
-        // Track with Facebook Pixel
-        if (window.fbq) {
-          window.fbq('track', 'Lead');
-          console.log('Facebook lead event tracked');
-        }
-        
-        // Directly redirect to the Typeform URL
-        window.location.href = 'https://form.typeform.com/to/x6zCNbQl';
-      } else {
-        throw new Error('Typeform script not loaded');
-      }
-    } catch (error) {
-      console.error('Error opening Typeform:', error);
-      
-      // Fallback to Google Form if Typeform fails
-      window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
-      
-      toast({
-        title: "Using fallback form",
-        description: "We're having trouble with our main form. Opening alternative form.",
-        variant: "destructive",
-        duration: 3000,
-      });
-    }
+    // Open the form in a new tab
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
+    
+    // Show toast notification
+    toast({
+      title: "Form opened",
+      description: "The investor brief request form has been opened in a new tab.",
+      duration: 3000,
+    });
   };
 
   return (
@@ -141,9 +96,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
               Includes a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
             </p>
           </div>
-          
-          {/* Hidden container for Typeform */}
-          <div id="typeform-container" className="hidden"></div>
         </div>
       </main>
     </div>
