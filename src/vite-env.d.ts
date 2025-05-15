@@ -3,4 +3,5 @@
 
 interface Window {
   fbq?: (event: string, eventName: string, options?: object) => void;
+  dataLayer?: any[];
 }

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
@@ -16,17 +16,30 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
   
-  const handleApplyClick = () => {
-    // Open the form in a new tab
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
+  // Load the Typeform embed script when component mounts
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = "//embed.typeform.com/next/embed.js";
+    script.async = true;
+    script.onload = () => {
+      console.log("Typeform script loaded successfully");
+    };
+    script.onerror = () => {
+      console.error("Failed to load Typeform script");
+      toast({
+        title: "Error",
+        description: "Failed to load the form. Please try again later.",
+        variant: "destructive",
+      });
+    };
     
-    // Show toast notification
-    toast({
-      title: "Form opened",
-      description: "The investor brief request form has been opened in a new tab.",
-      duration: 3000,
-    });
-  };
+    document.body.appendChild(script);
+    
+    return () => {
+      // Cleanup
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-navy text-white flex flex-col">
@@ -82,17 +95,20 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
             ></iframe>
           </div>
 
-          {/* CTA button */}
-          <div className="flex flex-col items-center gap-3">
-            <Button 
-              onClick={handleApplyClick}
-              className={`bg-gold text-navy ${isMobile ? 'text-lg py-4 px-6' : 'text-xl md:text-2xl py-6 px-10'} font-bold rounded-lg shadow-lg hover:bg-gold/90 transition-all transform hover:scale-105 animate-pulse h-auto`}
-            >
-              <span className="flex items-center gap-2">
-                📘 {isMobile ? "Get Investor Brief" : "Express Interest + Get the Full Investor Brief"}
-              </span>
-            </Button>
-            <p className="text-sm md:text-base text-white/80 max-w-lg">
+          {/* Typeform embed replacing the CTA button */}
+          <div className="w-full mb-8 md:mb-12">
+            <div 
+              data-tf-live="01JVAXPNASNWA3XMH18Z5BEE1G" 
+              className="shadow-lg rounded-lg overflow-hidden" 
+              style={{ minHeight: isMobile ? '400px' : '600px' }}
+              onClick={() => {
+                // Track form interaction with Facebook Pixel
+                if (window.fbq) {
+                  window.fbq('track', 'Lead');
+                }
+              }}
+            ></div>
+            <p className="text-sm md:text-base text-white/80 max-w-lg mx-auto mt-4">
               Includes a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
             </p>
           </div>
