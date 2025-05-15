@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
@@ -16,58 +16,77 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
   const typeformContainerRef = useRef<HTMLDivElement>(null);
+  const [typeformLoaded, setTypeformLoaded] = useState(false);
   
   // Handle Typeform initialization and error handling
   useEffect(() => {
-    // Check if the typeform embed script is available
-    if (typeformContainerRef.current && window.typeformEmbed) {
-      try {
-        // Make sure the container is clean before embedding
-        typeformContainerRef.current.innerHTML = '';
-        
-        // Create the Typeform container element
-        const typeformDiv = document.createElement('div');
-        typeformDiv.setAttribute('data-tf-live', '01JVAXPNASNWA3XMH18Z5BEE1G');
-        typeformContainerRef.current.appendChild(typeformDiv);
-        
-        // Re-initialize typeform embed after adding the element
-        window.typeformEmbed.makeWidget(typeformDiv, '01JVAXPNASNWA3XMH18Z5BEE1G', {
-          opacity: 0,
-          buttonText: "Express Interest",
-          hideHeaders: true,
-          hideFooter: true
-        });
-
-        console.log('Typeform initialized successfully');
-      } catch (error) {
-        console.error('Error initializing Typeform:', error);
-        toast({
-          title: "Error loading form",
-          description: "There was a problem loading the investor form. Please try again.",
-          variant: "destructive",
-        });
+    // Create a function to check if Typeform is loaded
+    const initializeTypeform = () => {
+      if (window.typeformEmbed && typeformContainerRef.current) {
+        try {
+          // Clear any previous typeform elements
+          typeformContainerRef.current.innerHTML = '';
+          
+          // Create the button element that will trigger the typeform
+          const button = document.createElement('button');
+          button.setAttribute('data-tf-popup', '01JVAXPNASNWA3XMH18Z5BEE1G');
+          button.setAttribute('data-tf-opacity', '0');
+          button.setAttribute('data-tf-size', '100');
+          button.setAttribute('data-tf-iframe-props', 'title=Investor Interest Form');
+          button.setAttribute('data-tf-transitive-search-params', 'true');
+          button.setAttribute('data-tf-medium', 'snippet');
+          button.className = 'typeform-button';
+          button.style.display = 'none'; // Hide the actual button
+          
+          // Add to DOM
+          typeformContainerRef.current.appendChild(button);
+          
+          // Let the rest of the app know typeform is ready
+          setTypeformLoaded(true);
+          console.log('Typeform button initialized successfully');
+        } catch (error) {
+          console.error('Error initializing Typeform:', error);
+          toast({
+            title: "Error loading form",
+            description: "There was a problem loading the investor form. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        console.warn('Typeform embed script not loaded yet, retrying in 1 second...');
+        // Retry after a short delay
+        setTimeout(initializeTypeform, 1000);
       }
-    } else {
-      console.warn('Typeform embed script not loaded yet');
-    }
+    };
+    
+    // Start the initialization process
+    initializeTypeform();
+    
+    // Cleanup function
+    return () => {
+      if (typeformContainerRef.current) {
+        typeformContainerRef.current.innerHTML = '';
+      }
+    };
   }, []);
 
   const handleApplyClick = () => {
-    // If Typeform fails to load, fall back to the Google Form
     try {
-      if (typeformContainerRef.current?.querySelector('[data-tf-live]')) {
-        // If Typeform is available, trigger it programmatically
-        const typeformPopup = typeformContainerRef.current.querySelector('[data-tf-popup]');
-        if (typeformPopup) {
-          // Trigger click on the typeform button
-          typeformPopup.dispatchEvent(new Event('click'));
+      if (typeformLoaded && typeformContainerRef.current) {
+        // Get the hidden typeform button and click it
+        const typeformButton = typeformContainerRef.current.querySelector('.typeform-button') as HTMLElement;
+        
+        if (typeformButton) {
+          typeformButton.click();
+          console.log('Typeform button clicked successfully');
           
           // For Facebook Pixel tracking
           if (window.fbq) {
             window.fbq('track', 'Lead');
+            console.log('Facebook pixel Lead event tracked');
           }
         } else {
-          throw new Error('Typeform popup button not found');
+          throw new Error('Typeform button not found');
         }
       } else {
         throw new Error('Typeform not initialized');
