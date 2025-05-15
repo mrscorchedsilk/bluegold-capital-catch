@@ -47,7 +47,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
           }}
         >
           <Phone size={isMobile ? 16 : 20} />
-          {isMobile ? "+91 94296..." : "+91 94296 94121"}
+          {isMobile ? "Contact Us" : "+91 94296 94121"}
         </a>
       </header>
 
