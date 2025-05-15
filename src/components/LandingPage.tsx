@@ -17,15 +17,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
   
   const handleApplyClick = () => {
-    // Open the form in a new tab
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
+    // Directly redirect to the Typeform URL
+    window.location.href = 'https://form.typeform.com/to/x6zCNbQl';
     
-    // Show toast notification
-    toast({
-      title: "Form opened",
-      description: "The investor brief request form has been opened in a new tab.",
-      duration: 3000,
-    });
+    // Track with Facebook Pixel (this will fire before redirect)
+    if (window.fbq) {
+      window.fbq('track', 'Lead');
+    }
   };
 
   return (
