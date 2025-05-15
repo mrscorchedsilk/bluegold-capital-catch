@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
@@ -15,99 +15,17 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
-  const typeformContainerRef = useRef<HTMLDivElement>(null);
-  const [typeformLoaded, setTypeformLoaded] = useState(false);
   
-  // Handle Typeform initialization and error handling
-  useEffect(() => {
-    // Create a function to check if Typeform is loaded
-    const initializeTypeform = () => {
-      if (window.typeformEmbed && typeformContainerRef.current) {
-        try {
-          // Clear any previous typeform elements
-          typeformContainerRef.current.innerHTML = '';
-          
-          // Create the button element that will trigger the typeform
-          const button = document.createElement('button');
-          button.setAttribute('data-tf-popup', '01JVAXPNASNWA3XMH18Z5BEE1G');
-          button.setAttribute('data-tf-opacity', '0');
-          button.setAttribute('data-tf-size', '100');
-          button.setAttribute('data-tf-iframe-props', 'title=Investor Interest Form');
-          button.setAttribute('data-tf-transitive-search-params', 'true');
-          button.setAttribute('data-tf-medium', 'snippet');
-          button.className = 'typeform-button';
-          button.style.display = 'none'; // Hide the actual button
-          
-          // Add to DOM
-          typeformContainerRef.current.appendChild(button);
-          
-          // Let the rest of the app know typeform is ready
-          setTypeformLoaded(true);
-          console.log('Typeform button initialized successfully');
-        } catch (error) {
-          console.error('Error initializing Typeform:', error);
-          toast({
-            title: "Error loading form",
-            description: "There was a problem loading the investor form. Please try again.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        console.warn('Typeform embed script not loaded yet, retrying in 1 second...');
-        // Retry after a short delay
-        setTimeout(initializeTypeform, 1000);
-      }
-    };
-    
-    // Start the initialization process
-    initializeTypeform();
-    
-    // Cleanup function
-    return () => {
-      if (typeformContainerRef.current) {
-        typeformContainerRef.current.innerHTML = '';
-      }
-    };
-  }, []);
-
   const handleApplyClick = () => {
-    try {
-      if (typeformLoaded && typeformContainerRef.current) {
-        // Get the hidden typeform button and click it
-        const typeformButton = typeformContainerRef.current.querySelector('.typeform-button') as HTMLElement;
-        
-        if (typeformButton) {
-          typeformButton.click();
-          console.log('Typeform button clicked successfully');
-          
-          // For Facebook Pixel tracking
-          if (window.fbq) {
-            window.fbq('track', 'Lead');
-            console.log('Facebook pixel Lead event tracked');
-          }
-        } else {
-          throw new Error('Typeform button not found');
-        }
-      } else {
-        throw new Error('Typeform not initialized');
-      }
-    } catch (error) {
-      console.error('Error opening Typeform:', error);
-      
-      // Fallback to Google Form if Typeform fails
-      window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
-      
-      toast({
-        title: "Form opened",
-        description: "The investor brief request form has been opened in a new tab.",
-        duration: 3000,
-      });
-      
-      // For Facebook Pixel tracking
-      if (window.fbq) {
-        window.fbq('track', 'Lead');
-      }
-    }
+    // Open the form in a new tab
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
+    
+    // Show toast notification
+    toast({
+      title: "Form opened",
+      description: "The investor brief request form has been opened in a new tab.",
+      duration: 3000,
+    });
   };
 
   return (
@@ -178,9 +96,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
               Includes a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
             </p>
           </div>
-          
-          {/* Hidden container for Typeform */}
-          <div ref={typeformContainerRef} className="hidden"></div>
         </div>
       </main>
     </div>
