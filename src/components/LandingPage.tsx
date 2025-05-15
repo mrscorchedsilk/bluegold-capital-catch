@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
@@ -10,7 +9,6 @@ import { toast } from '@/components/ui/use-toast';
 declare global {
   interface Window {
     typeformEmbed?: any;
-    fbq?: any;
   }
 }
 
