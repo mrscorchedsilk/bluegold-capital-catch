@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
@@ -15,17 +15,80 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
+  const typeformContainerRef = useRef<HTMLDivElement>(null);
   
+  // Handle Typeform initialization and error handling
+  useEffect(() => {
+    // Check if the typeform embed script is available
+    if (typeformContainerRef.current && window.typeformEmbed) {
+      try {
+        // Make sure the container is clean before embedding
+        typeformContainerRef.current.innerHTML = '';
+        
+        // Create the Typeform container element
+        const typeformDiv = document.createElement('div');
+        typeformDiv.setAttribute('data-tf-live', '01JVAXPNASNWA3XMH18Z5BEE1G');
+        typeformContainerRef.current.appendChild(typeformDiv);
+        
+        // Re-initialize typeform embed after adding the element
+        window.typeformEmbed.makeWidget(typeformDiv, '01JVAXPNASNWA3XMH18Z5BEE1G', {
+          opacity: 0,
+          buttonText: "Express Interest",
+          hideHeaders: true,
+          hideFooter: true
+        });
+
+        console.log('Typeform initialized successfully');
+      } catch (error) {
+        console.error('Error initializing Typeform:', error);
+        toast({
+          title: "Error loading form",
+          description: "There was a problem loading the investor form. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } else {
+      console.warn('Typeform embed script not loaded yet');
+    }
+  }, []);
+
   const handleApplyClick = () => {
-    // Open the form in a new tab
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
-    
-    // Show toast notification
-    toast({
-      title: "Form opened",
-      description: "The investor brief request form has been opened in a new tab.",
-      duration: 3000,
-    });
+    // If Typeform fails to load, fall back to the Google Form
+    try {
+      if (typeformContainerRef.current?.querySelector('[data-tf-live]')) {
+        // If Typeform is available, trigger it programmatically
+        const typeformPopup = typeformContainerRef.current.querySelector('[data-tf-popup]');
+        if (typeformPopup) {
+          // Trigger click on the typeform button
+          typeformPopup.dispatchEvent(new Event('click'));
+          
+          // For Facebook Pixel tracking
+          if (window.fbq) {
+            window.fbq('track', 'Lead');
+          }
+        } else {
+          throw new Error('Typeform popup button not found');
+        }
+      } else {
+        throw new Error('Typeform not initialized');
+      }
+    } catch (error) {
+      console.error('Error opening Typeform:', error);
+      
+      // Fallback to Google Form if Typeform fails
+      window.open('https://docs.google.com/forms/d/e/1FAIpQLSe8ug-QkAMtjCKPmzm3PBgICvRLMG1CJ-wF5ypOQq9q0bipPQ/viewform', '_blank');
+      
+      toast({
+        title: "Form opened",
+        description: "The investor brief request form has been opened in a new tab.",
+        duration: 3000,
+      });
+      
+      // For Facebook Pixel tracking
+      if (window.fbq) {
+        window.fbq('track', 'Lead');
+      }
+    }
   };
 
   return (
@@ -96,6 +159,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
               Includes a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
             </p>
           </div>
+          
+          {/* Hidden container for Typeform */}
+          <div ref={typeformContainerRef} className="hidden"></div>
         </div>
       </main>
     </div>
