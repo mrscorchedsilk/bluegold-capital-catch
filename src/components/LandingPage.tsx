@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
@@ -16,47 +16,15 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
   
-  // Load the Typeform embed script when component mounts
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = "//embed.typeform.com/next/embed.js";
-    script.async = true;
-    script.onload = () => {
-      console.log("Typeform script loaded successfully");
-      
-      // Configure Typeform to redirect to the Thank You page
-      if (window.tf) {
-        window.tf.createWidget('01JVAXPNASNWA3XMH18Z5BEE1G', {
-          container: document.querySelector('[data-tf-live="01JVAXPNASNWA3XMH18Z5BEE1G"]'),
-          redirectUrl: `${window.location.origin}/thank-you`,
-          hidden: {
-            source: 'direct'
-          },
-          onSubmit: () => {
-            // Track form submission with Facebook Pixel
-            if (window.fbq) {
-              window.fbq('track', 'CompleteRegistration');
-            }
-          }
-        });
-      }
-    };
-    script.onerror = () => {
-      console.error("Failed to load Typeform script");
-      toast({
-        title: "Error",
-        description: "Failed to load the form. Please try again later.",
-        variant: "destructive",
-      });
-    };
+  const handleApplyClick = () => {
+    // Directly redirect to the Typeform URL
+    window.location.href = 'https://form.typeform.com/to/x6zCNbQl';
     
-    document.body.appendChild(script);
-    
-    return () => {
-      // Cleanup
-      document.body.removeChild(script);
-    };
-  }, []);
+    // Track with Facebook Pixel (this will fire before redirect)
+    if (window.fbq) {
+      window.fbq('track', 'Lead');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-navy text-white flex flex-col">
@@ -112,20 +80,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
             ></iframe>
           </div>
 
-          {/* Typeform embed replacing the CTA button */}
-          <div className="w-full mb-8 md:mb-12">
-            <div 
-              data-tf-live="01JVAXPNASNWA3XMH18Z5BEE1G" 
-              className="shadow-lg rounded-lg overflow-hidden" 
-              style={{ minHeight: isMobile ? '400px' : '600px' }}
-              onClick={() => {
-                // Track form interaction with Facebook Pixel
-                if (window.fbq) {
-                  window.fbq('track', 'Lead');
-                }
-              }}
-            ></div>
-            <p className="text-sm md:text-base text-white/80 max-w-lg mx-auto mt-4">
+          {/* CTA button */}
+          <div className="flex flex-col items-center gap-3">
+            <Button 
+              onClick={handleApplyClick}
+              className={`bg-gold text-navy ${isMobile ? 'text-lg py-4 px-6' : 'text-xl md:text-2xl py-6 px-10'} font-bold rounded-lg shadow-lg hover:bg-gold/90 transition-all transform hover:scale-105 animate-pulse h-auto`}
+            >
+              <span className="flex items-center gap-2">
+                📘 {isMobile ? "Get Investor Brief" : "Express Interest + Get the Full Investor Brief"}
+              </span>
+            </Button>
+            <p className="text-sm md:text-base text-white/80 max-w-lg">
               Includes a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
             </p>
           </div>

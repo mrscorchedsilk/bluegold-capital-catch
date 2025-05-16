@@ -8,7 +8,6 @@ import Index from "./pages/Index";
 import BusinessOwnersLanding from "./pages/BusinessOwnersLanding";
 import VolatilityLanding from "./pages/VolatilityLanding";
 import EmergingSectorLanding from "./pages/EmergingSectorLanding";
-import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,7 +23,6 @@ const App = () => (
           <Route path="/business-owners" element={<BusinessOwnersLanding />} />
           <Route path="/volatility" element={<VolatilityLanding />} />
           <Route path="/emerging-sector" element={<EmergingSectorLanding />} />
-          <Route path="/thank-you" element={<ThankYou />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
