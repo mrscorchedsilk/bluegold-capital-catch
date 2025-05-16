@@ -38,11 +38,39 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
         navigate('/thank-you');
       }
     });
+
+    // Set up global error handler to redirect to index on errors
+    const originalOnError = window.onerror;
+    window.onerror = function(message, source, lineno, colno, error) {
+      // Call original error handler if it exists
+      if (originalOnError) {
+        originalOnError.apply(this, arguments);
+      }
+      
+      // Log the error
+      console.error("Application error detected:", {message, source, lineno, colno, error});
+      
+      // Show error toast
+      toast({
+        title: "Something went wrong",
+        description: "Redirecting you to the home page...",
+        variant: "destructive"
+      });
+      
+      // Redirect to index page after a short delay to show the toast
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+      
+      return true; // Prevents the default error handler
+    };
     
     return () => {
       // Clean up
       window.removeEventListener('message', () => {});
       document.body.removeChild(script);
+      // Restore original error handler
+      window.onerror = originalOnError;
     };
   }, [navigate]);
 
