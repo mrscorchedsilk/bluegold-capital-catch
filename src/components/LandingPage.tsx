@@ -145,7 +145,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
             ></iframe>
           </div>
           
-          {/* Express Interest Button - NEW */}
+          {/* Express Interest Button */}
           <div className="mb-10 md:mb-12 w-full">
             <Button 
               className="animate-pulse bg-yellow-400 hover:bg-yellow-500 text-navy text-xl md:text-2xl font-bold py-6 px-8 rounded-lg shadow-lg w-full md:w-auto transition-all"
@@ -157,20 +157,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
               Click above to access the complete investment package and secure your position
             </p>
           </div>
-
-          {/* Embedded Typeform */}
-          {/* <div className="w-full mb-8">
-            <div 
-              data-tf-live="01JVAXPNASNWA3XMH18Z5BEE1G"
-              data-tf-medium="snippet"
-              data-tf-hidden="utm_source=xxxxx,utm_medium=xxxxx,utm_campaign=xxxxx,utm_term=xxxxx,utm_content=xxxxx"
-              className="w-full"
-              style={{ height: isMobile ? "400px" : "500px" }}
-            ></div>
-            <p className="text-sm md:text-base text-white/80 mt-4 max-w-lg mx-auto">
-              Fill out this form to receive a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
-            </p>
-          </div> */}
         </div>
       </main>
     </div>
