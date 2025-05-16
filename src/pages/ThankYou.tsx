@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Sparkles, ThumbsUp, Rocket } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,33 @@ const ThankYou = () => {
   const directAccess = !location.state?.fromSubmission;
 
   useEffect(() => {
+    // Add Google Tag Manager script to head
+    try {
+      // GTM script for head
+      const script = document.createElement('script');
+      script.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-W38KBVVD');`;
+      document.head.insertBefore(script, document.head.firstChild);
+      
+      // GTM noscript for body
+      const noscript = document.createElement('noscript');
+      const iframe = document.createElement('iframe');
+      iframe.src = "https://www.googletagmanager.com/ns.html?id=GTM-W38KBVVD";
+      iframe.height = "0";
+      iframe.width = "0";
+      iframe.style.display = "none";
+      iframe.style.visibility = "hidden";
+      noscript.appendChild(iframe);
+      document.body.insertBefore(noscript, document.body.firstChild);
+      
+      console.info("GTM tracking code successfully added");
+    } catch (error) {
+      console.error("Error adding GTM tracking code:", error);
+    }
+    
     // Show proper toast based on how the page was accessed
     toast({
       title: directAccess ? "Welcome!" : "Thank you!",
@@ -26,6 +52,28 @@ const ThankYou = () => {
 
     return () => clearTimeout(timer);
   }, [directAccess]);
+
+  // Handle errors and redirect if needed
+  useEffect(() => {
+    const handleError = (event) => {
+      console.error("Error occurred:", event.error);
+      toast({
+        variant: "destructive",
+        title: "An error occurred",
+        description: "We'll redirect you to the homepage."
+      });
+      
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    };
+
+    window.addEventListener('error', handleError);
+    
+    return () => {
+      window.removeEventListener('error', handleError);
+    };
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-navy to-[#0a0e1c] text-white flex flex-col">
