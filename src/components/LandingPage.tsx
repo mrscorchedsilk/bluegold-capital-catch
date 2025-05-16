@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Phone } from 'lucide-react';
+import { Phone, ExternalLink } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -74,6 +74,23 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
     };
   }, [navigate]);
 
+  // Function to handle the express interest button click
+  const handleExpressInterestClick = () => {
+    // Open Typeform in a new tab
+    window.open('https://form.typeform.com/to/x6zCNbQl', '_blank');
+    
+    // Track with Facebook Pixel if available
+    if (window.fbq) {
+      window.fbq('track', 'Lead');
+    }
+    
+    // Show toast notification
+    toast({
+      title: "Opening investment form",
+      description: "Thank you for your interest in BlueGold Fish Farming.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-navy text-white flex flex-col">
       {/* Header with logo and phone */}
@@ -126,6 +143,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
               title="BlueGold Investment Presentation"
               className="shadow-xl"
             ></iframe>
+          </div>
+          
+          {/* Express Interest Button - NEW */}
+          <div className="mb-10 md:mb-12 w-full">
+            <Button 
+              className="animate-pulse bg-yellow-400 hover:bg-yellow-500 text-navy text-xl md:text-2xl font-bold py-6 px-8 rounded-lg shadow-lg w-full md:w-auto transition-all"
+              onClick={handleExpressInterestClick}
+            >
+              Express Interest + Get Investor Brief <ExternalLink className="ml-1" size={24} />
+            </Button>
+            <p className="text-white/80 text-sm mt-3">
+              Click above to access the complete investment package and secure your position
+            </p>
           </div>
 
           {/* Embedded Typeform */}
