@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Sparkles, ThumbsUp, RocketLaunch } from 'lucide-react';
+import { Sparkles, ThumbsUp, Rocket } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -109,7 +109,7 @@ const ThankYou = () => {
                 <div className="flex flex-col md:flex-row gap-4 justify-center">
                   <Button asChild className="bg-gold text-navy hover:bg-gold/90 flex items-center gap-2 text-lg py-6">
                     <Link to="/">
-                      <RocketLaunch className="w-5 h-5" />
+                      <Rocket className="w-5 h-5" />
                       Return Home
                     </Link>
                   </Button>
