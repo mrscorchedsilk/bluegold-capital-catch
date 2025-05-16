@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Phone } from 'lucide-react';
 import LogoPlaceholder from './LogoPlaceholder';
 import { Button } from './ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface LandingPageProps {
   headline: {
@@ -15,16 +16,35 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
-  const handleApplyClick = () => {
-    // Directly redirect to the Typeform URL
-    window.location.href = 'https://form.typeform.com/to/x6zCNbQl';
+  // Initialize Typeform
+  useEffect(() => {
+    // Load Typeform embed script
+    const script = document.createElement('script');
+    script.src = "//embed.typeform.com/next/embed.js";
+    script.async = true;
+    document.body.appendChild(script);
     
-    // Track with Facebook Pixel (this will fire before redirect)
-    if (window.fbq) {
-      window.fbq('track', 'Lead');
-    }
-  };
+    // Set up Typeform callback for form submission
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'form-submit') {
+        // Track with Facebook Pixel
+        if (window.fbq) {
+          window.fbq('track', 'Lead');
+        }
+        
+        // Redirect to thank you page
+        navigate('/thank-you');
+      }
+    });
+    
+    return () => {
+      // Clean up
+      window.removeEventListener('message', () => {});
+      document.body.removeChild(script);
+    };
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-navy text-white flex flex-col">
@@ -80,18 +100,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
             ></iframe>
           </div>
 
-          {/* CTA button */}
-          <div className="flex flex-col items-center gap-3">
-            <Button 
-              onClick={handleApplyClick}
-              className={`bg-gold text-navy ${isMobile ? 'text-lg py-4 px-6' : 'text-xl md:text-2xl py-6 px-10'} font-bold rounded-lg shadow-lg hover:bg-gold/90 transition-all transform hover:scale-105 animate-pulse h-auto`}
-            >
-              <span className="flex items-center gap-2">
-                📘 {isMobile ? "Get Investor Brief" : "Express Interest + Get the Full Investor Brief"}
-              </span>
-            </Button>
-            <p className="text-sm md:text-base text-white/80 max-w-lg">
-              Includes a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
+          {/* Embedded Typeform */}
+          <div className="w-full mb-8">
+            <div 
+              data-tf-live="01JVAXPNASNWA3XMH18Z5BEE1G"
+              data-tf-medium="snippet"
+              data-tf-hidden="utm_source=xxxxx,utm_medium=xxxxx,utm_campaign=xxxxx,utm_term=xxxxx,utm_content=xxxxx"
+              className="w-full"
+              style={{ height: isMobile ? "400px" : "500px" }}
+            ></div>
+            <p className="text-sm md:text-base text-white/80 mt-4 max-w-lg mx-auto">
+              Fill out this form to receive a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
             </p>
           </div>
         </div>
