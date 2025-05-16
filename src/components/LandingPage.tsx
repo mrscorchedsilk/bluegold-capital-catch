@@ -34,8 +34,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
           window.fbq('track', 'Lead');
         }
         
-        // Redirect to thank you page
-        navigate('/thank-you');
+        // Redirect to thank you page with submission state
+        navigate('/thank-you', { state: { fromSubmission: true } });
       }
     });
 

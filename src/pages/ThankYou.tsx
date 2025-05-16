@@ -3,17 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { Sparkles, ThumbsUp, Rocket } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 
 const ThankYou = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const directAccess = !location.state?.fromSubmission;
 
   useEffect(() => {
-    // Show a welcome toast
+    // Show proper toast based on how the page was accessed
     toast({
-      title: "Thank you!",
-      description: "We've received your information and will be in touch soon.",
+      title: directAccess ? "Welcome!" : "Thank you!",
+      description: "We're excited to have you join our fish farming revolution.",
     });
 
     // Set animation complete after intro animations
@@ -22,7 +25,7 @@ const ThankYou = () => {
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [directAccess]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-navy to-[#0a0e1c] text-white flex flex-col">
