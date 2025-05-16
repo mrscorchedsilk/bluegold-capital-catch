@@ -159,7 +159,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
           </div>
 
           {/* Embedded Typeform */}
-          <div className="w-full mb-8">
+          {/* <div className="w-full mb-8">
             <div 
               data-tf-live="01JVAXPNASNWA3XMH18Z5BEE1G"
               data-tf-medium="snippet"
@@ -170,7 +170,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
             <p className="text-sm md:text-base text-white/80 mt-4 max-w-lg mx-auto">
               Fill out this form to receive a 56-page breakdown of TAM, unit economics, expansion roadmap, and exit strategy.
             </p>
-          </div>
+          </div> */}
         </div>
       </main>
     </div>
