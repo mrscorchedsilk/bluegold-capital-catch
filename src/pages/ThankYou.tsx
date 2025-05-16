@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import { Sparkles, ThumbsUp, Rocket } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/components/ui/toast';
 
 const ThankYou = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
@@ -23,6 +24,11 @@ const ThankYou = () => {
       })(window,document,'script','dataLayer','GTM-W38KBVVD');`;
       document.head.insertBefore(script, document.head.firstChild);
       
+      // Add Google Ads conversion tracking for Thank You page
+      const conversionScript = document.createElement('script');
+      conversionScript.innerHTML = `gtag('event', 'conversion', {'send_to': 'AW-17064015010/0-SSCN2Wz8gaEKLp4Mg_'});`;
+      document.head.appendChild(conversionScript);
+      
       // GTM noscript for body
       const noscript = document.createElement('noscript');
       const iframe = document.createElement('iframe');
@@ -34,7 +40,7 @@ const ThankYou = () => {
       noscript.appendChild(iframe);
       document.body.insertBefore(noscript, document.body.firstChild);
       
-      console.info("GTM tracking code successfully added");
+      console.info("GTM tracking code and conversion tracking successfully added");
     } catch (error) {
       console.error("Error adding GTM tracking code:", error);
     }
