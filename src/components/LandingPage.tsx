@@ -23,6 +23,23 @@ const LandingPage: React.FC<LandingPageProps> = ({ headline }) => {
     script.async = true;
     script.onload = () => {
       console.log("Typeform script loaded successfully");
+      
+      // Configure Typeform to redirect to the Thank You page
+      if (window.tf) {
+        window.tf.createWidget('01JVAXPNASNWA3XMH18Z5BEE1G', {
+          container: document.querySelector('[data-tf-live="01JVAXPNASNWA3XMH18Z5BEE1G"]'),
+          redirectUrl: `${window.location.origin}/thank-you`,
+          hidden: {
+            source: 'direct'
+          },
+          onSubmit: () => {
+            // Track form submission with Facebook Pixel
+            if (window.fbq) {
+              window.fbq('track', 'CompleteRegistration');
+            }
+          }
+        });
+      }
     };
     script.onerror = () => {
       console.error("Failed to load Typeform script");
